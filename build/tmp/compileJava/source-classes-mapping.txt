@@ -1,4 +1,11 @@
 project/LearningSpringApplication.java
  project.LearningSpringApplication
+project/repository/AlunoRepository.java
+ project.repository.AlunoRepository
+project/service/AlunoService.java
+ project.service.AlunoService
 project/entity/Aluno.java
  project.entity.Aluno
+ project.entity.Aluno$AlunoBuilder
+project/controller/AlunoController.java
+ project.controller.AlunoController
