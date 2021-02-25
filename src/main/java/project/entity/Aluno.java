@@ -1,5 +1,6 @@
 package project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,14 +22,17 @@ public class Aluno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_aluno")
     private Long id;
+
     @NotNull
     @NotEmpty
     private String nome;
+
     @NotNull
     @NotEmpty
     @Pattern(regexp = ".+@pagseguro.com", message = "Apenas emails @pagseguro.com sao permitidos.")
     private String email;
-    @NotNull
-    @NotEmpty
-    private String status;
+
+    @ManyToOne
+    @JsonIgnoreProperties("alunos")
+    private Turma turma;
 }
