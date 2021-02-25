@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.entity.Aluno;
 import project.entity.Turma;
 import project.request.TurmaPostRequestBody;
 import project.request.TurmaPutResquestBody;
 import project.service.TurmaService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("turmas")
@@ -24,6 +26,12 @@ public class TurmaController {
     public ResponseEntity<List<Turma>> findAll(){
         log.info("findAll Turma get request");
         return ResponseEntity.ok(turmaService.findAll());
+    }
+
+    @GetMapping(path="criarGrupos/{id}")
+    public ResponseEntity<Map<String,List<Aluno>>> groupGenerator(@PathVariable Long id, @RequestParam Long n){
+        log.info("groupGenerator Turma get request");
+        return ResponseEntity.ok(turmaService.groupGenerator(id, n));
     }
 
     @PostMapping

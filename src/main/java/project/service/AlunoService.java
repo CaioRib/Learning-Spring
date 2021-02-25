@@ -4,19 +4,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import project.entity.Turma;
 import project.mapper.AlunoMapper;
 import project.entity.Aluno;
 import project.repository.AlunoRepository;
+import project.repository.TurmaRepository;
 import project.request.AlunoPostResquestBody;
 import project.request.AlunoPutResquestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
 public class AlunoService {
     private final AlunoRepository alunoRepository;
+    private final TurmaRepository turmaRepository;
 
     public Aluno findById(long id){
         return alunoRepository.findById(id)
@@ -41,11 +45,19 @@ public class AlunoService {
         Aluno newAluno = AlunoMapper.INSTANCE.toAluno(alunoPutResquestBody);
         Aluno oldAluno = findById(newAluno.getId());
 
-        newAluno.builder()
-                .id(oldAluno.getId())
-                .build();
+        newAluno.setId(oldAluno.getId());
+        newAluno.setTurma(oldAluno.getTurma());
 
-        alunoRepository.delete(oldAluno);
         alunoRepository.save(newAluno);
+    }
+
+    public void register(Long id_aluno, Long id_turma){
+        Aluno aluno = findById(id_aluno);
+        Turma turma = turmaRepository.findById(id_turma)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Turma nao encontrada"));;
+
+        aluno.setTurma(turma);
+        alunoRepository.save(aluno);
+
     }
 }
