@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import project.entity.Aluno;
 import project.request.AlunoPostResquestBody;
 import project.request.AlunoPutResquestBody;
+import project.response.AlunoGetResponseBody;
 import project.service.AlunoService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("alunos")
@@ -22,7 +22,7 @@ public class AlunoController {
 
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Aluno> findById(@PathVariable long id) {
+    public ResponseEntity<AlunoGetResponseBody> findById(@PathVariable long id) {
         log.info("findById Aluno get request");
         return ResponseEntity.ok(alunoService.findById(id));
     }
@@ -66,6 +66,4 @@ public class AlunoController {
         alunoService.register(id_aluno, turma);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }

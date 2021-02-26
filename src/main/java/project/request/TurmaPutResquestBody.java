@@ -9,9 +9,6 @@ import javax.persistence.Id;
 
 @Data
 public class TurmaPutResquestBody {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_turma")
     private Long id;
     private String nome;
 

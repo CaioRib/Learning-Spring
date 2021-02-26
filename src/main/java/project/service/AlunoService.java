@@ -14,6 +14,7 @@ import project.repository.AlunoRepository;
 import project.repository.TurmaRepository;
 import project.request.AlunoPostResquestBody;
 import project.request.AlunoPutResquestBody;
+import project.response.AlunoGetResponseBody;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -28,9 +29,11 @@ public class AlunoService {
     private final AlunoRepository alunoRepository;
     private final TurmaRepository turmaRepository;
 
-    public Aluno findById(long id){
-        return alunoRepository.findById(id)
+    public AlunoGetResponseBody findById(long id){
+        Aluno aluno = alunoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno nao encontrado"));
+
+        return AlunoMapper.INSTANCE.toAlunoGetResponseBody(aluno);
 
     }
 
@@ -44,12 +47,17 @@ public class AlunoService {
     }
 
     public void delete(Long id){
-        alunoRepository.delete(findById(id));
+        Aluno aluno = alunoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno nao encontrado"));
+
+        alunoRepository.delete(aluno);
     }
 
     public void replace(AlunoPutResquestBody alunoPutResquestBody) {
         Aluno newAluno = AlunoMapper.INSTANCE.toAluno(alunoPutResquestBody);
-        Aluno oldAluno = findById(newAluno.getId());
+
+        Aluno oldAluno = alunoRepository.findById(newAluno.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno nao encontrado"));
 
         newAluno.setId(oldAluno.getId());
         newAluno.setTurma(oldAluno.getTurma());
@@ -58,7 +66,9 @@ public class AlunoService {
     }
 
     public void register(Long id_aluno, Long id_turma){
-        Aluno aluno = findById(id_aluno);
+        Aluno aluno = alunoRepository.findById(id_aluno)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno nao encontrado"));
+
         Turma turma = turmaRepository.findById(id_turma)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Turma nao encontrada"));;
 
@@ -68,7 +78,9 @@ public class AlunoService {
     }
 
     public String meanGrade(Long id){
-        Aluno aluno = findById(id);
+        Aluno aluno = alunoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno nao encontrado"));
+
         List<Prova> provas = aluno.getProvas();
         BigDecimal mean = BigDecimal.ZERO;
 
