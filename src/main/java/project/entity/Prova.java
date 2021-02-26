@@ -20,7 +20,7 @@ public class Prova {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "id_aluno", foreignKey = @ForeignKey(name = "aluno"))
+    @JoinColumn(name = "id_aluno")//, foreignKey = @ForeignKey(name = "id_aluno"))
     @ManyToOne
     private Aluno aluno;
 

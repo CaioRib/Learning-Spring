@@ -10,7 +10,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -34,6 +33,8 @@ public class Aluno {
     @Pattern(regexp = ".+@pagseguro.com", message = "Apenas emails @pagseguro.com sao permitidos.")
     private String email;
 
+    private String status;
+
     @ManyToOne
     @JsonIgnoreProperties("alunos")
     private Turma turma;
@@ -41,8 +42,5 @@ public class Aluno {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "aluno")
     @JsonIgnoreProperties("aluno")
     private List<Prova> provas;
-
-
-
 
 }
