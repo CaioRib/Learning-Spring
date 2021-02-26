@@ -1,9 +1,12 @@
 package project.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.ap.shaded.freemarker.core.ArithmeticEngine;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import project.entity.Prova;
 import project.entity.Turma;
 import project.mapper.AlunoMapper;
 import project.entity.Aluno;
@@ -12,7 +15,10 @@ import project.repository.TurmaRepository;
 import project.request.AlunoPostResquestBody;
 import project.request.AlunoPutResquestBody;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -58,6 +64,20 @@ public class AlunoService {
 
         aluno.setTurma(turma);
         alunoRepository.save(aluno);
+
+    }
+
+    public String meanGrade(Long id){
+        Aluno aluno = findById(id);
+        List<Prova> provas = aluno.getProvas();
+        BigDecimal mean = BigDecimal.ZERO;
+
+        for(Prova prova : provas){
+            mean = mean.add(prova.getNota());
+        }
+        mean = mean.divide(BigDecimal.valueOf(provas.size()));
+
+        return (((mean.compareTo(BigDecimal.valueOf(5)) > 0) ? "Aprovado" : "Reprovado") + " com nota " + mean.toString());
 
     }
 }

@@ -11,6 +11,7 @@ import project.request.AlunoPutResquestBody;
 import project.service.AlunoService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("alunos")
@@ -21,7 +22,7 @@ public class AlunoController {
 
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Aluno> findById(@PathVariable long id){
+    public ResponseEntity<Aluno> findById(@PathVariable long id) {
         log.info("findById Aluno get request");
         return ResponseEntity.ok(alunoService.findById(id));
     }
@@ -31,6 +32,12 @@ public class AlunoController {
     public ResponseEntity<List<Aluno>> findAll() {
         log.info("findAll Aluno get request");
         return ResponseEntity.ok(alunoService.findAll());
+    }
+
+    @GetMapping(path="media/{id}")
+    public  ResponseEntity<String> meanGrade(@PathVariable Long id){
+        log.info("meanGrade Aluno get request");
+        return ResponseEntity.ok(alunoService.meanGrade(id));
     }
 
     @PostMapping
@@ -59,4 +66,6 @@ public class AlunoController {
         alunoService.register(id_aluno, turma);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
 }
