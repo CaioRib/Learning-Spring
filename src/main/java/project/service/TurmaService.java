@@ -72,19 +72,7 @@ public class TurmaService {
         int salaSize = alunos.size();
         int groupSize = (int) Math.floor(salaSize / n);
         int overflow = (int) (salaSize % n);
-
-//        int i , j;
-//        for(i = 0; i < n; i++){
-//            List<Aluno> group = new ArrayList<>();
-//            j = 0;
-//            for(Iterator<Aluno> it = alunos.iterator(); j < groupSize + ((i >= n - overflow) ? 1 : 0); j++){
-//                group.add(it.next());
-//                it.remove();
-//            }
-//
-//            groups.put("Grupo " + (i + 1), group);
-//        }
-
+        
         int fromIndex = 0;
         int toIndex = 0;
 
