@@ -1,15 +1,13 @@
 package project.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.ap.shaded.freemarker.core.ArithmeticEngine;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import project.entity.Aluno;
 import project.entity.Prova;
 import project.entity.Turma;
 import project.mapper.AlunoMapper;
-import project.entity.Aluno;
 import project.repository.AlunoRepository;
 import project.repository.TurmaRepository;
 import project.request.AlunoPostResquestBody;
@@ -17,10 +15,8 @@ import project.request.AlunoPutResquestBody;
 import project.response.AlunoGetResponseBody;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 
 @Service
@@ -28,12 +24,13 @@ import java.util.Optional;
 public class AlunoService {
     private final AlunoRepository alunoRepository;
     private final TurmaRepository turmaRepository;
+    private final AlunoMapper alunoMapper;
 
     public AlunoGetResponseBody findById(long id){
         Aluno aluno = alunoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno nao encontrado"));
 
-        return AlunoMapper.INSTANCE.toAlunoGetResponseBody(aluno);
+        return alunoMapper.toAlunoGetResponseBody(aluno);
 
     }
 
@@ -42,7 +39,9 @@ public class AlunoService {
     }
 
     public Aluno save(AlunoPostResquestBody alunoPostResquestBody){
-        Aluno newAluno = AlunoMapper.INSTANCE.toAluno(alunoPostResquestBody);
+        Aluno newAluno = alunoMapper.toAluno(alunoPostResquestBody);
+        newAluno.setStatus("Inativo");
+        newAluno.setTurma(null);
         return alunoRepository.save(newAluno);
     }
 
@@ -51,10 +50,13 @@ public class AlunoService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno nao encontrado"));
 
         alunoRepository.delete(aluno);
+        aluno.setStatus("Inativo");
+        aluno.setTurma(null);
+        alunoRepository.save(aluno);
     }
 
     public void replace(AlunoPutResquestBody alunoPutResquestBody) {
-        Aluno newAluno = AlunoMapper.INSTANCE.toAluno(alunoPutResquestBody);
+        Aluno newAluno = alunoMapper.toAluno(alunoPutResquestBody);
 
         Aluno oldAluno = alunoRepository.findById(newAluno.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno nao encontrado"));
@@ -73,6 +75,7 @@ public class AlunoService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Turma nao encontrada"));;
 
         aluno.setTurma(turma);
+        aluno.setStatus("Ativo");
         alunoRepository.save(aluno);
 
     }
@@ -81,7 +84,7 @@ public class AlunoService {
         Aluno aluno = alunoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aluno nao encontrado"));
 
-        List<Prova> provas = aluno.getProvas();
+        List<Prova> provas = (aluno.getProvas() != null ? aluno.getProvas() : Collections.emptyList());
         BigDecimal mean = BigDecimal.ZERO;
 
         for(Prova prova : provas){
@@ -92,4 +95,5 @@ public class AlunoService {
         return (((mean.compareTo(BigDecimal.valueOf(5)) > 0) ? "Aprovado" : "Reprovado") + " com nota " + mean.toString());
 
     }
+
 }
