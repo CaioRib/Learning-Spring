@@ -5,21 +5,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import project.entity.Aluno;
 import project.request.AlunoPostResquestBody;
 import project.request.AlunoPutResquestBody;
 import project.response.AlunoGetResponseBody;
 import project.service.AlunoService;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("alunos")
+@RequestMapping("/alunos")
 @RequiredArgsConstructor
 @Slf4j
 public class AlunoController {
     private final AlunoService alunoService;
-
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<AlunoGetResponseBody> findById(@PathVariable long id) {
@@ -34,7 +35,7 @@ public class AlunoController {
         return ResponseEntity.ok(alunoService.findAll());
     }
 
-    @GetMapping(path="media/{id}")
+    @GetMapping(path="/{id}/media")
     public  ResponseEntity<String> meanGrade(@PathVariable Long id){
         log.info("meanGrade Aluno get request");
         return ResponseEntity.ok(alunoService.meanGrade(id));
@@ -43,10 +44,11 @@ public class AlunoController {
     @PostMapping
     public ResponseEntity<Aluno> save(@RequestBody AlunoPostResquestBody aluno){
         log.info("save Aluno post request");
-        return new ResponseEntity<>(alunoService.save(aluno), HttpStatus.CREATED);
+        final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("").buildAndExpand(alunoService.save(aluno)).toUri();
+        return ResponseEntity.created(location).build();
     }
 
-    @DeleteMapping(path = "/{id}")
+    @PutMapping(path = "{id}/trancar")
     public ResponseEntity<Void> delete(@PathVariable long id){
         log.info("delete Aluno delete request");
         alunoService.delete(id);
@@ -60,10 +62,10 @@ public class AlunoController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping(path="/matricular/{id_aluno}")
-    public ResponseEntity<Void> register(@PathVariable Long id_aluno, @RequestParam Long turma){
+    @PutMapping(path="/{id}/matricular")
+    public ResponseEntity<Void> register(@PathVariable Long id, @RequestParam Long turma){
         log.info("registration Aluno put request");
-        alunoService.register(id_aluno, turma);
+        alunoService.register(id, turma);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
